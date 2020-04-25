@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ViewFlipper;
 
 import com.example.getsetgo.R;
@@ -16,8 +19,11 @@ import com.example.getsetgo.ui.home.HomeActivity;
 import com.example.getsetgo.ui.model.PlaceModel;
 import com.example.getsetgo.ui.viewmodel.ViewPlaceViewModel;
 import com.example.getsetgo.ui.viewmodel.viewmodelfactory.ViewPlaceViewModelFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
-public class ViewPlaceActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class ViewPlaceActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, OnMapReadyCallback, View.OnClickListener {
 
     private GestureDetector gestureDetector;
     private float x1;
@@ -32,10 +38,12 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
     public static final String EXTRA_PLACE_LOCARION = "com.example.getsetgo.EXTRA_PLACE_LOCARION";
     public static final String EXTRA_PLACE_DESCRIPTION = "com.example.getsetgo.EXTRA_PLACE_DESCRIPTION";
 
+    private Button button_Back;
+    GoogleMap googleMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_place);
         ActivityViewPlaceBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_view_place);
 
         Intent data = getIntent();
@@ -51,9 +59,14 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
 
         viewFlipper = (ViewFlipper) findViewById(R.id.placeDetails_ViewFlipper_ViewPlace);
 
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_Fragment);
+        supportMapFragment.getMapAsync(this);
 
-
+        button_Back = (Button) findViewById(R.id.back_Button);
+        button_Back.setOnClickListener(this);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -82,14 +95,14 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
                 if (Math.abs(valueX) > MIN_DISTANCE){
                     //Left to Right Swipe
                     if (x2>x1){
+                        /*
                         viewFlipper.setInAnimation(this,android.R.anim.slide_in_left);
                         viewFlipper.setOutAnimation(this,android.R.anim.slide_out_right);
                         viewFlipper.showNext();
+                        */
                     }
                     //Right to Left Swipe
                     if (x1>x2){
-
-
                         viewFlipper.setInAnimation(this,R.anim.slide_in_right);
                         viewFlipper.setOutAnimation(this,R.anim.slide_out_left);
                         viewFlipper.showPrevious();
@@ -142,4 +155,17 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
         return false;
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == button_Back){
+            viewFlipper.setInAnimation(this,android.R.anim.slide_in_left);
+            viewFlipper.setOutAnimation(this,android.R.anim.slide_out_right);
+            viewFlipper.showNext();
+        }
+    }
 }

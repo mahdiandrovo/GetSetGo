@@ -2,6 +2,7 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:maps="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -13,8 +14,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:padding="10dp"
         android:orientation="vertical"
         tools:context=".ui.activity.ViewPlaceActivity">
 
@@ -24,7 +23,8 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/placeTextDetails_LinearLayout_ViewPlace"
+                android:padding="10dp"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -52,18 +52,29 @@
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/placeMapDetails_LinearLayout_ViewPlace"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:src="@drawable/maps"
+                <fragment
+                    android:id="@+id/map_Fragment"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
-            </LinearLayout>
+                <Button
+                    android:id="@+id/back_Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/map_Fragment"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="@+id/map_Fragment"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.024" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ViewFlipper>
 

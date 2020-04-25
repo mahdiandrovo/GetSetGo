@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GetSetGo</string>
+    <string name="google_map_api_key">AIzaSyCluT2WxZijVTZLGTHhDjaroISVoAndBtc</string>
 </resources>

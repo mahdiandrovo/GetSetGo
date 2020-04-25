@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.getsetgo.R;
 import com.example.getsetgo.data.network.responses.Place;
@@ -18,6 +19,8 @@ import com.example.getsetgo.ui.activity.ViewPlaceActivity;
 import com.example.getsetgo.ui.adapter.PlaceViewAdapter;
 import com.example.getsetgo.ui.viewmodel.HomeViewModel;
 import com.example.getsetgo.ui.viewmodel.viewmodelfactory.HomeViewModelFactory;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.List;
 
@@ -48,17 +51,31 @@ public class HomeActivity extends AppCompatActivity {
                 adapter.setOnItemClickListener(new PlaceViewAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Place place) {
-                        Intent intent = new Intent(HomeActivity.this, ViewPlaceActivity.class);
-                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_NAME,place.getName());
-                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LOCARION,place.getLocation());
-                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_DESCRIPTION,place.getDescription());
-                        startActivity(intent);
+                        if (isGooglePlayServicesOk()){
+                            Intent intent = new Intent(HomeActivity.this, ViewPlaceActivity.class);
+                            intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_NAME,place.getName());
+                            intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LOCARION,place.getLocation());
+                            intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_DESCRIPTION,place.getDescription());
+                            startActivity(intent);
+                        }
                     }
                 });
             }
         });
 
-
-
     }
+
+    private boolean isGooglePlayServicesOk(){
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int result = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (result == ConnectionResult.SUCCESS){
+            return true;
+        } else if (googleApiAvailability.isUserResolvableError(result)){
+            Toast.makeText(this,"Please Update Your Google Play Service",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this,"Google Play Service Required For This Application",Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
 }
