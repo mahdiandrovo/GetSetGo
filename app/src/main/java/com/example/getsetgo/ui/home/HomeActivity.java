@@ -56,6 +56,8 @@ public class HomeActivity extends AppCompatActivity {
                             intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_NAME,place.getName());
                             intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LOCARION,place.getLocation());
                             intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_DESCRIPTION,place.getDescription());
+                            intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LATITUDE,place.getLatitude());
+                            intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LONGITUDE,place.getLongitude());
                             startActivity(intent);
                         }
                     }

@@ -19,9 +19,13 @@ import com.example.getsetgo.ui.home.HomeActivity;
 import com.example.getsetgo.ui.model.PlaceModel;
 import com.example.getsetgo.ui.viewmodel.ViewPlaceViewModel;
 import com.example.getsetgo.ui.viewmodel.viewmodelfactory.ViewPlaceViewModelFactory;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ViewPlaceActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, OnMapReadyCallback, View.OnClickListener {
 
@@ -37,6 +41,8 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
     public static final String EXTRA_PLACE_NAME = "com.example.getsetgo.EXTRA_PLACE_NAME";
     public static final String EXTRA_PLACE_LOCARION = "com.example.getsetgo.EXTRA_PLACE_LOCARION";
     public static final String EXTRA_PLACE_DESCRIPTION = "com.example.getsetgo.EXTRA_PLACE_DESCRIPTION";
+    public static final String EXTRA_PLACE_LATITUDE = "com.example.getsetgo.EXTRA_PLACE_LATITUDE";
+    public static final String EXTRA_PLACE_LONGITUDE = "com.example.getsetgo.EXTRA_PLACE_LONGITUDE";
 
     private Button button_Back;
     GoogleMap googleMap;
@@ -66,7 +72,26 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
         button_Back.setOnClickListener(this);
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
 
+        //Default value is take from Bangladesh's Latitude and Longitude
+        double latitude = getIntent().getDoubleExtra(EXTRA_PLACE_LATITUDE,23.6850);
+        double longitude = getIntent().getDoubleExtra(EXTRA_PLACE_LONGITUDE,90.3563);
+
+        LatLng latLng = new LatLng(latitude,longitude);
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,18);
+        googleMap.moveCamera(cameraUpdate);
+
+        MarkerOptions marker = new MarkerOptions()
+                .title(""+getIntent().getStringExtra(EXTRA_PLACE_NAME))
+                .position(latLng);
+
+        googleMap.addMarker(marker);
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -153,11 +178,6 @@ public class ViewPlaceActivity extends AppCompatActivity implements GestureDetec
     @Override
     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
         return false;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
     }
 
     @Override
