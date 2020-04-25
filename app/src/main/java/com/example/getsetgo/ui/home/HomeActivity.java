@@ -7,27 +7,19 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Adapter;
-import android.widget.Toast;
 
 import com.example.getsetgo.R;
-import com.example.getsetgo.data.network.RetrofitClient;
 import com.example.getsetgo.data.network.responses.Place;
-import com.example.getsetgo.data.network.responses.PlacesResponse;
 import com.example.getsetgo.data.repositories.HomeRepository;
 import com.example.getsetgo.databinding.ActivityHomeBinding;
+import com.example.getsetgo.ui.activity.ViewPlaceActivity;
 import com.example.getsetgo.ui.adapter.PlaceViewAdapter;
 import com.example.getsetgo.ui.viewmodel.HomeViewModel;
-import com.example.getsetgo.ui.viewmodel.SigninViewModel;
 import com.example.getsetgo.ui.viewmodel.viewmodelfactory.HomeViewModelFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -53,8 +45,20 @@ public class HomeActivity extends AppCompatActivity {
             public void onChanged(List<Place> places) {
                 adapter = new PlaceViewAdapter(places,getApplicationContext());
                 recyclerView_Places.setAdapter(adapter);
+                adapter.setOnItemClickListener(new PlaceViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Place place) {
+                        Intent intent = new Intent(HomeActivity.this, ViewPlaceActivity.class);
+                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_NAME,place.getName());
+                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_LOCARION,place.getLocation());
+                        intent.putExtra(ViewPlaceActivity.EXTRA_PLACE_DESCRIPTION,place.getDescription());
+                        startActivity(intent);
+                    }
+                });
             }
         });
+
+
 
     }
 }

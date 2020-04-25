@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewplaceviewmodel"
+            type="com.example.getsetgo.ui.viewmodel.ViewPlaceViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:orientation="vertical"
+        tools:context=".ui.activity.ViewPlaceActivity">
+
+        <ViewFlipper
+            android:id="@+id/placeDetails_ViewFlipper_ViewPlace"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/placeTextDetails_LinearLayout_ViewPlace"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:text="@{viewplaceviewmodel.placeName}"
+                    android:textStyle="bold"
+                    android:textSize="40dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+                <TextView
+                    android:text="@{viewplaceviewmodel.placeLocation}"
+                    android:textSize="20dp"
+                    android:textColor="@color/colorGreen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:text="@{viewplaceviewmodel.placeDescription}"
+                    android:layout_marginTop="20dp"
+                    android:textSize="18dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/placeMapDetails_LinearLayout_ViewPlace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:src="@drawable/maps"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+        </ViewFlipper>
+
+
+    </LinearLayout>
+
+</layout>

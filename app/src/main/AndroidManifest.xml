@@ -12,11 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.example.getsetgo.ui.home.HomeActivity"></activity>
-        <activity android:name="com.example.getsetgo.ui.auth.SignupActivity">
-
-        </activity>
-        <activity android:name="com.example.getsetgo.ui.auth.SigninActivity">
+        <activity android:name=".ui.activity.ViewPlaceActivity"></activity>
+        <activity android:name=".ui.home.HomeActivity" />
+        <activity android:name=".ui.auth.SignupActivity"></activity>
+        <activity android:name=".ui.auth.SigninActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
