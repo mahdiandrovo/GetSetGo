@@ -16,6 +16,13 @@ import com.example.getsetgo.ui.model.SignupModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SignupViewModel extends ViewModel {
     public String name;
     public String email;
@@ -75,27 +82,59 @@ public class SignupViewModel extends ViewModel {
             }
         }
 
-        final LiveData<String> signupResponse = signupRepository.userSignup(signupModel.getName(),signupModel.getEmail(),signupModel.getPassword());
-        signupResponse.observe((LifecycleOwner) context, new Observer<String>() {
+        //Get Response from Server
+        Call<ResponseBody> signupResponse = signupRepository.userSignup(signupModel.getName(),signupModel.getEmail(),signupModel.getPassword());
+        signupResponse.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onChanged(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    boolean error = jsonObject.getBoolean("error");
-                    String message = jsonObject.getString("message");
-                    if (!error){
-                        signupListener.onSuccess(message);
-                        //Saving user to ROOM Database
-                        User user = new User(0,signupModel.getName(),signupModel.getEmail());
-                        signupRepository.saveUser(user);
-                    } else {
-                        signupListener.onFailure(message);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    JSONObject jsonObject = null;
+
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+
+                        if (!error){
+                            signupListener.onSuccess(message);
+                            //Saving user to ROOM Database
+                            User user = new User(0,signupModel.getName(),signupModel.getEmail());
+                            signupRepository.saveUser(user);
+                        } else {
+                            signupListener.onFailure(message);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
+                } else {
+                    //App Level error
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.errorBody().string());
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error){
+                            signupListener.onFailure(message);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //Server connection failed
+                signupListener.onFailure("Some Error Occured! Please Try Again!");
             }
         });
     }

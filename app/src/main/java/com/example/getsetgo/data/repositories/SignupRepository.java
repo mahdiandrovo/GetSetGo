@@ -27,35 +27,14 @@ public class SignupRepository {
         userDao = this.appDatabase.userDao();
     }
 
-    MutableLiveData<String> signupResponse = new MutableLiveData<>();
-
-    public MutableLiveData<String> userSignup(String name,String email, String password){
+    //Retrofit Signup API Call
+    public Call<ResponseBody> userSignup(String name,String email, String password){
 
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
                 .userSignup(name,email,password);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    try {
-                        signupResponse.setValue(response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    signupResponse.setValue("");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                signupResponse.setValue("");
-            }
-        });
-        return signupResponse;
+        return call;
     }
 
     //Save User in ROOM Database
