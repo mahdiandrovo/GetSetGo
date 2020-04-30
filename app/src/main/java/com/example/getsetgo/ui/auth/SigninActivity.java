@@ -22,6 +22,7 @@ import com.example.getsetgo.ui.home.HomeActivity;
 import com.example.getsetgo.ui.model.SigninModel;
 import com.example.getsetgo.ui.viewmodel.SigninViewModel;
 import com.example.getsetgo.ui.viewmodel.viewmodelfactory.SigninViewModelFactory;
+import com.example.getsetgo.util.ViewUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 public class SigninActivity extends AppCompatActivity implements SigninListener, View.OnClickListener {
@@ -71,6 +72,7 @@ public class SigninActivity extends AppCompatActivity implements SigninListener,
 
     @Override
     public void onSuccess(String message) {
+        ViewUtils.toast(message,this);
         progress_bar.setVisibility(View.INVISIBLE);
     }
 

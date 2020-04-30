@@ -19,6 +19,13 @@ import com.example.getsetgo.ui.model.SigninModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static androidx.core.content.ContextCompat.startActivity;
 
 
@@ -61,41 +68,69 @@ public class SigninViewModel extends ViewModel {
             }
         }
 
-
-        //Success
-        LiveData<String> loginResponse = signinRepository.userLogin(signInModel.getEmail(),signInModel.getPassword());
-        loginResponse.observe((LifecycleOwner) context, new Observer<String>() {
+        //Get Response from Server
+        Call<ResponseBody> call = signinRepository.userSignin(signInModel.getEmail(),signInModel.getPassword());
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onChanged(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    //No App Level error
 
-                    boolean error = jsonObject.getBoolean("error");
-                    String message = jsonObject.getString("message");
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
 
-                    if (!error){
-                        signinListener.onSuccess(message);
-                        JSONObject userObj = jsonObject.getJSONObject("user");
-                        int id = userObj.getInt("id");
-                        String name = userObj.getString("name");
-                        String email = userObj.getString("email");
-                        User user = new User(id,name,email);
-                        signinRepository.saveUser(user);
+                        if (!error){
+                            signinListener.onSuccess(message);
+
+                            JSONObject userObj = jsonObject.getJSONObject("user");
+                            int id = userObj.getInt("id");
+                            String name = userObj.getString("name");
+                            String email = userObj.getString("email");
+                            User user = new User(id,name,email);
+                            signinRepository.saveUser(user);
+
+                        } else {
+                            //Do not need this
+                            signinListener.onFailure(message);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    else {
-                        signinListener.onFailure(message);
-                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                else {
+                    //App Level error
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.errorBody().string());
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error){
+                            signinListener.onFailure(message);
+                        }
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //Server connection failed
+                signinListener.onFailure("Some Error Occured! Please Try Again!");
             }
         });
 
     }
-
-
 
     //Get logged in User
     public LiveData<User> getLoggedInUser(){
